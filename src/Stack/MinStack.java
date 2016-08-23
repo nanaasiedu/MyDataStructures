@@ -21,6 +21,10 @@ public class MinStack<T extends Comparable<T>> {
 	}
 	
 	public T getMin() {
+		if (min == null) {
+			return null;
+		}
+		
 		return min.getItem().getItem();
 	}
 	
@@ -34,6 +38,14 @@ public class MinStack<T extends Comparable<T>> {
 		}
 		
 		return popped;
+	}
+	
+	public T peek() {
+		if (top == null) {
+			return null;
+		}
+		
+		return top.getItem();
 	}
 	
 	private class MinInfo {
