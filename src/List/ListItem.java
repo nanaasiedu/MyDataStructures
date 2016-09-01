@@ -48,4 +48,9 @@ public class ListItem<T> {
 		return item;
 	}
 	
+	// Sets the item value
+	public void setVal(T item) {
+		this.item = item;
+	}
+	
 }

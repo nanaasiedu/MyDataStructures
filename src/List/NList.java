@@ -279,14 +279,17 @@ public class NList<T> implements List<T> {
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
+			ListItem<T> removedItem = curr;
 			
+			removedItem.prev().addNext(removedItem.next());
+			removedItem.next().addPrev(removedItem.prev());
+			
+			curr = curr.next();
 		}
 
 		@Override
-		public void set(T arg0) {
-			// TODO Auto-generated method stub
-			
+		public void set(T replacementItem) {
+			curr.setVal(replacementItem);
 		}
 		
 	}

@@ -95,10 +95,10 @@ public class NListTest {
 		
 		ListIterator<Character> iter = l.listIterator();
 		
-		assertEquals("Expected neext index 1", iter.nextIndex(), 1);
+		assertEquals("Expected next index 1", iter.nextIndex(), 1);
 		assertEquals("Expected 'A'", iter.next(), new Character('A'));
 		assertEquals("Expected 'B'", iter.next(), new Character('B'));
-		assertEquals("Expected neext index 1", iter.previousIndex(), 1);
+		assertEquals("Expected next index 1", iter.previousIndex(), 1);
 		assertEquals("Expected 'B'", iter.previous(), new Character('B'));
 		
 		int i = 0;
@@ -106,5 +106,33 @@ public class NListTest {
 			assertEquals("character loop fail", c, new Character((char)(65+i)));
 			i++;
 		}
+	}
+	
+	@Test
+	public void IteratorTest2() {
+		List<Boolean> l = new NList<Boolean>();
+		
+		for (int i = 0; i < 10; i++) {
+			l.add(i % 2 == 0);
+		}
+		
+		assertEquals("Expected 10 bools", l.size(), 10);
+		
+		ListIterator<Boolean> iter = l.listIterator();
+		
+		assertEquals("Expected next index 1", iter.nextIndex(), 1);
+		assertEquals("Expected 0 is even", iter.next(), new Boolean(true));
+		assertEquals("Expected 1 is odd", iter.next(), new Boolean(false));
+		iter.remove(); // remove 2 
+		iter.remove(); // remove 3
+		assertEquals("Expected 4 is even", iter.next(), new Boolean(true));
+		iter.add(55 % 2 == 0);
+		assertEquals("Expected 5 is even", iter.next(), new Boolean(false));
+		assertEquals("Expected 55 is even", iter.next(), new Boolean(false));
+		assertEquals("Expected 6 is even", iter.next(), new Boolean(true));
+		iter.set(true); // change 7 % 2 == 0 to false
+		assertEquals("Expected 7 is erronesously even", iter.next(), new Boolean(true));
+		
+		
 	}
 }
