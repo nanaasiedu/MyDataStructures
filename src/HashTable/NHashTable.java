@@ -2,6 +2,7 @@ package HashTable;
 
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import List.*;
@@ -14,6 +15,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 	private double load_factor;
 	private int capacity;
 	private int size;
+	private int numBuckets;
 	private NList<Map.Entry<K, V>>[] buckets;
 	
 	// CONSTRUCTORS ========
@@ -40,6 +42,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 	private void initialSetup() {
 		size = 0;
 		buckets = (NList<Map.Entry<K, V>>[])new Object[capacity];
+		numBuckets = 0;
 	}
 	
 	// PUBLIC METHODS =====
@@ -69,8 +72,22 @@ public class NHashTable<K,V> implements Map<K, V> {
 	}
 
 	@Override
-	public V get(Object arg0) {
-		// TODO Auto-generated method stub
+	public V get(Object keyObj) {
+		K key = (K)keyObj;
+	
+		int index = key.hashCode() % capacity;		
+		NList<Map.Entry<K, V>> list = buckets[index];
+		
+		if (list == null) {
+			return null;
+		}
+		
+		for (Map.Entry<K, V> entry : list) {
+			if (entry.getKey().equals(key)) {
+				return entry.getValue();
+			}
+		}
+		
 		return null;
 	}
 
@@ -88,19 +105,37 @@ public class NHashTable<K,V> implements Map<K, V> {
 	@Override
 	public V put(K key, V value) {
 		int index = key.hashCode() % capacity;
+		V oldValue = null;
 		
 		NList<Map.Entry<K, V>> list = buckets[index];
 		
 		if (list == null) {
 			buckets[index] = new NList<Map.Entry<K, V>>();
+			numBuckets++;
 			
 			Map.Entry<K, V> newEntry = new AbstractMap.SimpleEntry<K,V>(key, value);
 			buckets[index].add(newEntry);
+			size++;
 			
-			return value;
+			return oldValue;
 		}
 		
-	
+		ListIterator<Map.Entry<K, V>> iter = list.listIterator();
+		
+		while (iter.hasNext()) {
+			Map.Entry<K, V> entry = iter.next();
+			
+			if (entry.getKey().equals(key)) {
+				oldValue = entry.getValue();
+				entry.setValue(value);
+				return oldValue;
+			}
+		}
+		
+		Map.Entry<K, V> newEntry = new AbstractMap.SimpleEntry<K,V>(key, value);
+		list.add(0, newEntry);
+		size++;
+		
 		return null;
 	}
 
@@ -111,15 +146,35 @@ public class NHashTable<K,V> implements Map<K, V> {
 	}
 
 	@Override
-	public V remove(Object arg0) {
-		// TODO Auto-generated method stub
+	public V remove(Object keyObj) {
+		K key = (K)keyObj;
+		
+		int index = key.hashCode() % capacity;		
+		NList<Map.Entry<K, V>> list = buckets[index];
+		
+		if (list == null) {
+			return null;
+		}
+		
+		ListIterator<Map.Entry<K, V>> iter = list.listIterator();
+		
+		while (iter.hasNext()) {
+			Map.Entry<K, V> entry = iter.next();
+			
+			if (entry.getKey().equals(key)) {
+				V removedValue = entry.getValue();
+				iter.previous();
+				iter.remove();
+				return removedValue;
+			}
+		}
+		
 		return null;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
@@ -130,7 +185,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 	
 	// PRIVATE METHODS
 	
-	private boolean bucketFull() {
-		return capacity == size;
+	private boolean bucketsFull() {
+		return capacity == numBuckets;
 	}
 }
