@@ -8,7 +8,7 @@ public class NList<T> implements List<T> {
 	private ListItem<T> header;
 	private ListItem<T> footer;
 	
-	NList() {
+	public NList() {
 		header = new ListItem<T>();
 		footer = new ListItem<T>();
 		
