@@ -1,7 +1,9 @@
 package HashTable;
 
+import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +43,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 	// Initialises the fields 
 	private void initialSetup() {
 		size = 0;
-		buckets = (NList<Map.Entry<K, V>>[])new Object[capacity];
+		buckets = (NList<Map.Entry<K, V>>[]) Array.newInstance(NList.class, capacity);
 		numBuckets = 0;
 	}
 	
@@ -49,19 +51,43 @@ public class NHashTable<K,V> implements Map<K, V> {
 	
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		initialSetup();
 	}
 
 	@Override
-	public boolean containsKey(Object arg0) {
-		// TODO Auto-generated method stub
+	public boolean containsKey(Object keyObj) {
+		K key = (K)keyObj;
+		
+		int index = key.hashCode() % capacity;		
+		NList<Map.Entry<K, V>> list = buckets[index];
+		
+		if (list == null) {
+			return false;
+		}
+		
+		for (Map.Entry<K, V> entry : list) {
+			if (entry.getKey().equals(key)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
 	@Override
-	public boolean containsValue(Object arg0) {
-		// TODO Auto-generated method stub
+	public boolean containsValue(Object valueObj) {
+		V value = (V)valueObj;
+		
+		for (int i = 0; i < capacity; i++) {
+			List<Map.Entry<K, V>> list = buckets[i];
+			
+			for (Map.Entry<K, V> entry : list) {
+				if (entry.getValue().equals(value)){
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
 
@@ -76,12 +102,12 @@ public class NHashTable<K,V> implements Map<K, V> {
 		K key = (K)keyObj;
 	
 		int index = key.hashCode() % capacity;		
-		NList<Map.Entry<K, V>> list = buckets[index];
+		List<Map.Entry<K, V>> list = buckets[index];
 		
 		if (list == null) {
 			return null;
 		}
-		
+
 		for (Map.Entry<K, V> entry : list) {
 			if (entry.getKey().equals(key)) {
 				return entry.getValue();
@@ -107,7 +133,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 		int index = key.hashCode() % capacity;
 		V oldValue = null;
 		
-		NList<Map.Entry<K, V>> list = buckets[index];
+		List<Map.Entry<K, V>> list = buckets[index];
 		
 		if (list == null) {
 			buckets[index] = new NList<Map.Entry<K, V>>();
@@ -165,6 +191,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 				V removedValue = entry.getValue();
 				iter.previous();
 				iter.remove();
+				size--;
 				return removedValue;
 			}
 		}
@@ -185,7 +212,13 @@ public class NHashTable<K,V> implements Map<K, V> {
 	
 	// PRIVATE METHODS
 	
-	private boolean bucketsFull() {
-		return capacity == numBuckets;
+	// Returns table's current load factor
+	private int loadFactor() {
+		return numBuckets / capacity;
+	}
+	
+	// Return true iff the table needs to be expanded as the load factor capacity has been exceeded
+	private boolean tableOverload() {
+		return loadFactor() >= DEFAULT_LOAD_FACTOR;
 	}
 }

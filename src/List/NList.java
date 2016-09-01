@@ -242,7 +242,7 @@ public class NList<T> implements List<T> {
 
 		@Override
 		public boolean hasNext() {
-			return curr.next() != footer;
+			return curr != footer;
 		}
 
 		@Override
