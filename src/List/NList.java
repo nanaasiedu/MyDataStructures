@@ -93,8 +93,7 @@ public class NList<T> implements List<T> {
 
 	@Override
 	public Iterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return listIterator();
 	}
 
 	@Override
@@ -105,14 +104,12 @@ public class NList<T> implements List<T> {
 
 	@Override
 	public ListIterator listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new NListIterator(0);
 	}
 
 	@Override
-	public ListIterator listIterator(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public ListIterator listIterator(int pos) {
+		return new NListIterator(pos);
 	}
 
 	@Override
@@ -229,4 +226,68 @@ public class NList<T> implements List<T> {
 		return true;
 	}
 
+	private class NListIterator implements ListIterator<T> {
+		private ListItem<T> curr;
+		private int index;
+		
+		NListIterator(int initPos) {
+			curr = findItem(initPos);
+			index = initPos;
+		}
+		
+		@Override
+		public void add(T item) {
+			linkItems(curr, item, curr.next());
+		}
+
+		@Override
+		public boolean hasNext() {
+			return curr.next() != footer;
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return curr.prev() != header;
+		}
+
+		@Override
+		public T next() {
+			index++;
+			T item = curr.val();
+			curr = curr.next();
+			
+			return item;
+		}
+
+		@Override
+		public int nextIndex() {
+			return index + 1;
+		}
+
+		@Override
+		public T previous() {
+			index--;
+			curr = curr.prev();
+			return curr.val();
+			
+		}
+
+		@Override
+		public int previousIndex() {
+			return index - 1;
+		}
+
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void set(T arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 }

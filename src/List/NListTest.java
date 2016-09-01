@@ -2,6 +2,7 @@ package List;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.junit.Test;
 
@@ -63,6 +64,7 @@ public class NListTest {
 			l.add(i + 15);
 		}
 		
+		assertEquals("Expected size of 20", l.size(), 20);
 		assertEquals("Expected 25 from the list", new Integer(25), l.get(10));
 		assertEquals("Expected non empty list", false, l.isEmpty());
 		
@@ -79,5 +81,30 @@ public class NListTest {
 		
 		assertEquals("Expected henry search to fail", false, l.contains("Henry"));
 		assertEquals("Expected harry search to succeed", true, l.contains("Harry"));
+	}
+	
+	@Test
+	public void IteratorTest() {
+		List<Character> l = new NList<Character>();
+		
+		for (int i = 65; i < 91; i++) {
+			l.add((char)i);
+		}
+		
+		assertEquals("Expected 26 letters", l.size(), 26);
+		
+		ListIterator<Character> iter = l.listIterator();
+		
+		assertEquals("Expected neext index 1", iter.nextIndex(), 1);
+		assertEquals("Expected 'A'", iter.next(), new Character('A'));
+		assertEquals("Expected 'B'", iter.next(), new Character('B'));
+		assertEquals("Expected neext index 1", iter.previousIndex(), 1);
+		assertEquals("Expected 'B'", iter.previous(), new Character('B'));
+		
+		int i = 0;
+		for (Character c : l) {
+			assertEquals("character loop fail", c, new Character((char)(65+i)));
+			i++;
+		}
 	}
 }
