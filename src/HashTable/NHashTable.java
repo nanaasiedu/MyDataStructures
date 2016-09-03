@@ -47,7 +47,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 		numBuckets = 0;
 	}
 	
-	// PUBLIC METHODS =====
+	// PUBLIC METHODS ========
 	
 	@Override
 	public void clear() {
@@ -130,6 +130,8 @@ public class NHashTable<K,V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
+	    if (tableOverload()) rehash();
+		
 		int index = key.hashCode() % capacity;
 		V oldValue = null;
 		
@@ -210,15 +212,34 @@ public class NHashTable<K,V> implements Map<K, V> {
 		return null;
 	}
 	
-	// PRIVATE METHODS
+	// PRIVATE METHODS ========
 	
 	// Returns table's current load factor
 	private int loadFactor() {
-		return numBuckets / capacity;
+		return size / capacity;
 	}
 	
 	// Return true iff the table needs to be expanded as the load factor capacity has been exceeded
 	private boolean tableOverload() {
 		return loadFactor() >= DEFAULT_LOAD_FACTOR;
 	}
+	
+	// Rehashes the hash table to increase its capacity 
+	private void rehash() {
+		NList<Map.Entry<K, V>>[] oldBuckets = buckets;
+		capacity *= 2;
+		size = 0;
+		buckets = (NList<Map.Entry<K, V>>[]) Array.newInstance(NList.class, capacity);
+		
+		for (int i = 0; i < capacity/2; i++) {
+			if (oldBuckets[i] == null) continue;
+			
+			for(Map.Entry<K, V> entry : oldBuckets[i]) {
+				put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		
+	}
+	
 }
