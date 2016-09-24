@@ -33,9 +33,15 @@ public class NList<T> implements List<T> {
 	}
 
 	@Override
-	public boolean addAll(Collection arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean addAll(Collection collection) {
+		Iterator<T> iter = collection.iterator();
+		
+		while(iter.hasNext()) {
+			boolean result = add(iter.next());
+			if (!result) return false;
+		}
+		
+		return true;
 	}
 
 	@Override

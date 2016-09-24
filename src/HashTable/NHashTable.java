@@ -61,13 +61,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue(Object valueObj) {
-		V value = null;
-		
-		try {
-			value = (V)valueObj;
-		} catch (ClassCastException e) {
-			return false;
-		}
+		V value = (V)valueObj;
 		
 		for (int i = 0; i < capacity; i++) {
 			List<Map.Entry<K, V>> list = buckets[i];
@@ -90,15 +84,8 @@ public class NHashTable<K,V> implements Map<K, V> {
 
 	@Override
 	public V get(Object keyObj) {
-		K key = null;
+		K key = (K)keyObj;
 		
-		try {
-			key = (K)keyObj;
-		} catch (ClassCastException e) {
-			return null;
-		}
-		
-	
 		int index = key.hashCode() % capacity;		
 		List<Map.Entry<K, V>> list = buckets[index];
 		
@@ -173,14 +160,7 @@ public class NHashTable<K,V> implements Map<K, V> {
 
 	@Override
 	public V remove(Object keyObj) {
-		K key = null; 
-		
-		try {
-			key = (K)keyObj;
-		} catch (ClassCastException e) {
-			return null;
-		}
-		
+		K key = (K)keyObj;
 		
 		int index = key.hashCode() % capacity;		
 		NList<Map.Entry<K, V>> list = buckets[index];
